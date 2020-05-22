@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+.line {
+  fill: none;
+  /*stroke: steelblue;*/
+  stroke-width: 2px;
+}
+#covidLine{
+  stroke: #fdbf11;
+}
+#r07Line{
+  stroke: #000;
+}
+#r01Line{
+  stroke: #696969;
+}
+#r90Line{
+  stroke: #dcdbdb;
+}
+
+
+.tt-line{
+  fill: none;
+  stroke-width: 2px;
+  stroke: #353535;
+}
+#tt-dot{
+  stroke: #fdbf11;
+  stroke-width: 2px;
+  fill: #fff
+}
+
+</style>
+<body>
+
+<div id = "allData"></div>
+<div id = "containerWidth"></div>
+<div id = "isMobile"></div>
+<div id = "isPhone"></div>
+<div id = "figureTitle">This is the title of the overall figure</div>
+<div id="graph-container" class="wrapper">
+<div id="tooltip-header">
+<div class="tooltip-container">
+</div>
+</div>
+<div id="map-container">
+</div>
+</div>
+
+<div id = "lineContainer"></div>
+
+<script src="js/vendor/jquery-2.2.1.min.js"></script>
+<script src="js/vendor/jquery-ui.min.js"></script>
+
+<script src="js/vendor/d3.v5.min.js"></script>
+<script type="text/javascript" src="js/vendor/pym.min.js"></script>
+
+<script>
+
+
+
+
+
+
+/*  This visualization was made possible by modifying code provided by:
+
+http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922 */
+
+
+
+
+//Create SVG element and append map to the SVG
+
+function getAllData(){
+  return d3.select("#allData").datum()[0]
+}
+function getContainerWidth(){
+  return d3.select("#containerWidth").datum()[0]
+}
+
+
+function drawMap(container_width) {
+
+  var colors=[null,"#CFE8F3","#73BFE2","#1696D2","#0A4C6A"];
+
+
+
+
+  function buildLink(abbr){
+  return "https://www.urban.org/sites/default/files/factsheet-uninsured-women-" + abbr.toLowerCase().trim() + ".pdf"
+
+  }
+
+  d3.csv("data/states-data.csv").then(function(data) {
+
+  d3.json("data/us-states.json").then(function(json) {
+  for (var i = 0; i < data.length; i++) {
+  var dataState = data[i].name;
+  var dataAbbr = data[i].abbr;
+  var percentUI = data[i].percentUI
+
+  for (var j = 0; j < json.features.length; j++)  {
+  var jsonState = json.features[j].properties.name;
+  if (dataState == jsonState) {
+  // Copy the data value into the JSON
+  json.features[j].properties.abbr = dataAbbr; 
+  json.features[j].properties.percentUI= +percentUI;
+
+  // Stop looking through the JSON
+  break;
+  }
+  }
+
+  }
+  var IS_MOBILE = d3.select("#isMobile").style("display") ==  "block";
+  var IS_PHONE = d3.select("#isPhone").style("display") == "block";
+
+  //Width and height of map
+  $mapContainer = $("#map-container")
+  $tooltipHeader = $(".tooltip-container")
+  $mapContainer.empty();
+  $tooltipHeader.empty();
+  aspect_width = 15;
+  aspect_height = 8;
+  margin = { top: 0, right: 20, bottom: 0, left: 20 };
+  width= container_width*.7
+  height = Math.ceil((width * aspect_height) / aspect_width) - margin.top - margin.bottom; 
+
+  // D3 Projection
+  var projection = d3.geoAlbersUsa()
+  .translate([width/2, height/2])    // translate to center of screen
+  .scale([width]);          // scale things down so see entire US
+
+  // Define path generator
+  var path = d3.geoPath()               // path generator that will convert GeoJSON to SVG paths
+  .projection(projection);  // tell path generator to use albersUsa projection
+
+
+  var colorScale = d3.scaleThreshold()
+    .domain([.05, .10, .15, .20, .25])
+    .range(colors);
+
+
+  svg = d3.select("#map-container")
+  .append("svg")
+  .attr("width", width)
+  .attr("height", height);
+  // Bind the data to the SVG and create one path per GeoJSON feature
+  var states = svg.selectAll("path")
+  .data(json.features)
+  .enter()
+  .append("svg:a")    
+  .attr('target','_blank')
+  .append("path")
+  .attr("d", path)
+  .attr("class", function(d) {
+  return "state " + d.properties.abbr;
+  })
+  .style("stroke", "#fff")
+  .style("stroke-width", "1")
+  .style("fill", function(d){ return colorScale(d.properties.percentUI)})
+
+  //ADD LEADER LINE FOR DC
+  var dcData = json.features.filter(function(d) {return d.properties.name == "District of Columbia"})
+
+  var dcLine1 = svg.append("line")
+  .attr("x1", .764*(width))
+  .attr("y1", .238*(width))
+  .attr("x2", .835*(width))
+  .attr("y2", .238*(width))
+  .attr("stroke-width", 1.2)
+  .attr("stroke", "#353535")
+  var dcLine2 = svg.append("line")
+  .attr("x1", .835*(width))
+  .attr("y1", .238*(width))
+  .attr("x2", .835*(width))
+  .attr("y2", function() {
+  if (IS_PHONE){
+  return .26*(width)
+  } else { 
+  return .22*(width)}
+  })
+  .attr("stroke-width", 1.2)
+  .attr("stroke", "#353535")
+  var dcText = svg.append("a")
+  .attr("xlink:href", buildLink("DC"))
+  .attr('target','_blank')
+  .data(dcData)
+  .append("text")
+  .text(function(d) { 
+  if (IS_PHONE) {
+  return "DC";
+  } else {
+  return d.properties.name; }
+  })
+  .attr("x", function(){ return IS_PHONE ? .8*(width) + 10 : .8*(width) })
+  .attr("y", function() { 
+  if (IS_PHONE) {
+  return .28*(width)
+  } else { 
+  return .215*(width)}
+  })
+  .attr("class", "state-label state")    
+
+  //STATE TOOLTIP
+
+
+  var tooltip = d3.select(".tooltip-container")
+
+
+  var region = tooltip.append('div')
+  .attr('class', 'region-text')
+  region.append('div')
+  .attr('class', 'tooltip-title')
+  .text('STATE')
+
+  function selectState(selectedState) {
+  d3.selectAll(".state")
+  .classed('deselected', true)
+  .classed('selected', false)
+  d3.select(".state." + selectedState)
+  .classed('selected', true)
+  .classed("deselected", false)
+  }
+
+  d3.selectAll(".state")
+  .on("mouseover", function (d) {
+  dispatch.call("hoverState", this, (d3.select(this).attr('class')))
+  })
+  .on("mouseout", function (d) {
+  dispatch.call("dehoverState")
+  })
+  .on("click", function (d) {
+  dispatch.call("clickState", this, (d3.select(this).attr('class')))
+  })
+
+  var dispatch = d3.dispatch("hoverState", "dehoverState", "clickState");
+
+  region.append("div")
+  .attr('class', 'tooltip-data')
+  .text("Click on a state")
+
+  dispatch.on("clickState", function (selectedState) {
+    updateChart(selectedState)
+  })
+
+  dispatch.on("hoverState", function (selectedState) {
+  var stateName = d3.select(this).datum().properties.name
+  selectState(selectedState);
+  d3.select(".tooltip-data")
+  .html(stateName)
+  });
+  dispatch.on("dehoverState", function() {
+  d3.select(".tooltip-data")
+  .html("Click on a state")
+  })
+  // dispatch.on("clickState", function() {
+  // d3.select(".tooltip-data")
+  // .html("Click on a state")
+  // })
+
+
+  //STATE DROPDOWN MENU
+  var defaultOptionName = ""
+  var dropdown = tooltip.append('div')
+  .attr('class', 'dropdown-text')
+  // dropdown.append('div')
+  //       .attr('class', 'tooltip-title')
+  //  .text('SELECT A STATE')
+  var dropdownMenu =dropdown.append('div')
+  .attr('class', 'dropdown-container')
+  .append("select")
+  // .attr("onChange", "window.location.href=this.value")
+  .attr("onChange", "window.open(this.value, '_blank') ")
+  .selectAll("option")
+  .data(json.features)
+  .enter()
+  .append("option")
+  .text(function(d) {return d.properties.name})
+  .attr("value",function(d){return d.properties.link;})
+  d3.select('select')
+  .append("option")
+  .text("Select a state")
+  .attr("value","")
+  .attr("selected", "selected")
+  .attr("disabled", "disabled")
+  .attr("hidden", "hidden")
+
+
+  });
+
+  })
+}
+
+
+
+
+function drawChart(container_width){
+  d3.select("#containerWidth").datum([container_width])
+
+  $lineContainer = $("#lineContainer")
+  $lineContainer.empty();
+
+
+  // set the dimensions and margins of the graph
+  var margin = {top: 20, right: 20, bottom: 30, left: 80},
+  width = container_width - margin.left - margin.right,
+  height = 500 - margin.top - margin.bottom;
+
+
+
+  // set the ranges
+  var x = d3.scaleLinear().range([0, width]);
+  var y = d3.scaleLinear().range([height, 0]);
+
+  // define the 1st line
+  var covidline = d3.line()
+  .defined(function(d) {
+  return typeof(d.covid) != "undefined";
+  })
+  .x(function(d) { return x(d.week); })
+  .y(function(d) { return y(d.covid); });
+
+  // define the 2nd line
+  var r07Line = d3.line()
+  .x(function(d) { if(typeof(d.recession_07) != "undefined") return x(d.week); })
+  .y(function(d) { if(typeof(d.recession_07) != "undefined") return y(d.recession_07); });
+
+  var r01Line = d3.line()
+  .defined(function(d) {
+  return typeof(d.recession_01) != "undefined";
+  })
+  .x(function(d) { if(typeof(d.recession_01) != "undefined") return x(d.week); })
+  .y(function(d) { if(typeof(d.recession_01) != "undefined") return y(d.recession_01); });
+
+
+  var r90Line = d3.line()
+  .defined(function(d) {
+  return typeof(d.recession_90) != "undefined";
+  })
+  .x(function(d) { if(typeof(d.recession_90) != "undefined") return x(d.week); })
+  .y(function(d) { if(typeof(d.recession_90) != "undefined") return y(d.recession_90); });
+
+
+
+
+  // append the svg obgect to the body of the page
+  // appends a 'group' element to 'svg'
+  // moves the 'group' element to the top left margin
+  var svg = d3.select("#lineContainer").append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("id","lineG")
+  .attr("transform",
+  "translate(" + margin.left + "," + margin.top + ")");
+
+  // Get the data
+  function cleanVal(val){
+  if(val == "") return undefined
+  else return +val
+  }
+  d3.csv("data/ui-claims.csv").then(function(data) {
+
+    d3.select("#allData").datum([data])
+
+  // format the data
+  data.forEach(function(d) {
+  d.week = +d.week;
+  d.covid =  cleanVal(d.covid);
+  d.recession_07 = cleanVal(d.recession_07);
+  d.recession_01 = cleanVal(d.recession_01);
+  d.recession_90 = cleanVal(d.recession_90);
+  })
+  var datum = data.filter(function(d){ return d.state == "US"})
+
+  // Scale the range of the data
+  x.domain(d3.extent(datum, function(d) { return d.week; }));
+  y.domain([0, d3.max(datum, function(d) {
+  return Math.max(d.recession_07, d.covid, d.recession_90, d.recession_01) * 1.2; })]);
+
+
+  svg.append("path")
+  // .data([data])
+  .datum(datum)
+  .attr("class", "line")
+  .attr("id","r01Line")
+  .attr("d", r01Line);
+
+
+    svg.append("path")
+  // .data([data])
+  .datum(datum)
+  .attr("class", "line")
+  .attr("id","r90Line")
+  .attr("d", r90Line);
+
+  // Add the covidline path.
+
+
+  // Add the r07Line path.
+  svg.append("path")
+  // .data([data])
+  .datum(datum)
+  .attr("class", "line")
+  .attr("id","r07Line")
+  .attr("d", r07Line);
+
+
+  svg.append("path")
+  .datum(datum)
+  .attr("class", "line")
+  .attr("id","covidLine")
+  .attr("d", covidline);
+
+
+
+
+  // Add the X Axis
+  svg.append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+
+  // Add the Y Axis
+  svg.append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y));
+
+
+
+  var voronoi = d3.voronoi()
+  .x(function(d) { return x(d.week); })
+  .y(function(d) { return y(d.covid); })
+  .extent([[0, 0], [width, height]]);
+
+var vg = svg.append("g")
+  .attr("id", "voronoiG")
+
+vg.selectAll("path")
+    .data(voronoi.polygons(datum.filter(function(d){ return typeof(d.covid) != 'undefined'}))) //Use vononoi() with your dataset inside
+    .enter().append("path")
+    .attr("d", function(d, i) {  return "M" + d.join("L") + "Z"; })
+    .datum(function(d, i) { return d })
+    //Give each cell a unique class where the unique part corresponds
+    //to the circle classes
+    // .attr("class", function(d,i) { return "voronoi " + d.CountryCode; })
+    //.style("stroke", "#2074A0") //If you want to look at the cells
+    .style("fill", "transparent")
+    .style("stroke","none")
+    .style("pointer-events", "all")
+    .on("mouseover", function(d){
+      showTooltip(d.data, datum, x, y, svg, width)
+    })
+vg.on("mouseout",  removeTooltip);
+
+
+
+    svg.append("line")
+      .attr("class", "tt-line")
+      .attr("id", "tt-horizontal")
+      .attr("stroke-dasharray", "4 4")
+      .style("opacity", 0)
+
+
+    svg.append("line")
+      .attr("class", "tt-line")
+      .attr("id", "tt-vertical")
+      .attr("stroke-dasharray", "4 4")
+      .style("opacity", 0)
+
+    svg.append("circle")
+      .attr("id", "tt-dot")
+      .attr("r",6)
+      .style("opacity", 0)
+
+
+  });
+}
+
+
+
+
+
+function showTooltip(d, datum, x, y, svg, width){
+  
+  d3.select("#tt-dot")
+    .style("opacity",1)
+    .attr("cx", x(d.week))
+    .attr("cy", y(d.covid))
+
+// var testHorizontal = 
+
+
+
+    var pathLength = d3.select("#r07Line").node().getTotalLength();
+
+    var cx = x(d.week);
+    var beginning = cx,
+        end = pathLength,
+        target;
+    while (true) {
+        target = Math.floor((beginning + end) / 2);
+        pos = d3.select("#r07Line").node().getPointAtLength(target);
+        if ((target === end || target === beginning) && pos.x !== cx) {
+            break;
+        }
+        if (pos.x > cx) end = target;
+        else if (pos.x < cx) beginning = target;
+        else break; //position found
+    }
+
+
+    var cy = y(d.covid);
+    var beginning2 = height-cy,
+        end2 = pathLength,
+        target2;
+    while (true) {
+        target2 = Math.floor((beginning2 + end2) / 2);
+        pos2 = d3.select("#r07Line").node().getPointAtLength(target2);
+        if ((target2 === end2 || target2 === beginning2) && pos2.y !== cy) {
+            break;
+        }
+        if (pos2.y < cy) end2 = target2;
+        else if (pos2.y > cy) beginning2 = target2;
+        else break; //position found
+    }
+
+
+    // console.log(target)
+
+
+
+
+  d3.select("#tt-vertical")
+    .style("opacity",1)
+
+    .attr("x1", x(d.week))
+    .attr("x2" ,x(d.week))
+    .attr("y1", y(d.covid))
+    .attr("y2", pos.y)
+
+
+  //   var ptH = path_line_intersections(d3.select("#r07Line"), d3.select("#tt-horizontal"), 500)
+  //   var ptV = path_line_intersections(d3.select("#r07Line"), d3.select("#tt-vertical"), 500)
+  d3.select("#tt-horizontal")
+    .attr("x1", x(d.week))
+    .attr("x2" , pos2.x)
+    .attr("y1", y(d.covid))
+    .attr("y2", y(d.covid))
+    .style("opacity",1)
+
+  // d3.select("#tt-vertical")
+  //   .attr("x1", x(d.week))
+  //   .attr("x2" ,x(d.week))
+  //   .attr("y1", y(d.covid))
+  //   .attr("y2", ptV[0].y)
+  //   .style("opacity",1)
+
+}
+
+function updateChart(state){
+
+  var container_width = getContainerWidth()
+  var margin = {top: 20, right: 20, bottom: 30, left: 80},
+  width = container_width - margin.left - margin.right,
+  height = 500 - margin.top - margin.bottom;
+
+
+
+  // set the ranges
+  var x = d3.scaleLinear().range([0, width]);
+  var y = d3.scaleLinear().range([height, 0]);
+
+
+  var covidline = d3.line()
+  .defined(function(d) {
+  return typeof(d.covid) != "undefined";
+  })
+  .x(function(d) { return x(d.week); })
+  .y(function(d) { return y(d.covid); });
+
+  // define the 2nd line
+  var r07Line = d3.line()
+  .x(function(d) { if(typeof(d.recession_07) != "undefined") return x(d.week); })
+  .y(function(d) { if(typeof(d.recession_07) != "undefined") return y(d.recession_07); });
+
+  var r01Line = d3.line()
+  .defined(function(d) {
+  return typeof(d.recession_01) != "undefined";
+  })
+  .x(function(d) { if(typeof(d.recession_01) != "undefined") return x(d.week); })
+  .y(function(d) { if(typeof(d.recession_01) != "undefined") return y(d.recession_01); });
+
+
+  var r90Line = d3.line()
+  .defined(function(d) {
+  return typeof(d.recession_90) != "undefined";
+  })
+  .x(function(d) { if(typeof(d.recession_90) != "undefined") return x(d.week); })
+  .y(function(d) { if(typeof(d.recession_90) != "undefined") return y(d.recession_90); });
+
+
+
+  var data = getAllData()
+    var datum = data.filter(function(d){ return d.state == state.replace("state","").replace("deselected","").replace("selected","").trim()})
+
+
+  // Scale the range of the data
+  x.domain(d3.extent(datum, function(d) { return d.week; }));
+  y.domain([0, d3.max(datum, function(d) {
+  return Math.max(d.recession_07, d.covid) * 1.2; })]);
+  d3.select("#covidLine")
+  .datum(datum)
+  .transition()
+  .attr("d", covidline);
+
+  d3.select("#r07Line")
+  .datum(datum)
+  .transition()
+  .attr("d", r07Line);
+
+  d3.select("#r01Line")
+  .datum(datum)
+  .transition()
+  .attr("d", r01Line);
+
+
+  d3.select("#r90Line")
+  .datum(datum)
+  .transition()
+  .attr("d", r90Line);
+
+  d3.select(".y.axis")
+  .transition()
+  .call(d3.axisLeft(y));
+
+
+d3.selectAll("#voronoiG").remove()
+var svg = d3.select("#lineG")
+  
+  var voronoi = d3.voronoi()
+  .x(function(d) { return x(d.week); })
+  .y(function(d) { return y(d.covid); })
+  .extent([[0, 0], [width, height]]);
+
+var vg = svg.append("g")
+  .attr("id", "voronoiG")
+
+
+vg.selectAll("path")
+    .data(voronoi.polygons(datum.filter(function(d){ return typeof(d.covid) != 'undefined'}))) //Use vononoi() with your dataset inside
+    .enter().append("path")
+    .attr("d", function(d, i) {  return "M" + d.join("L") + "Z"; })
+    .datum(function(d, i) { return d })
+    //Give each cell a unique class where the unique part corresponds
+    //to the circle classes
+    // .attr("class", function(d,i) { return "voronoi " + d.CountryCode; })
+    //.style("stroke", "#2074A0") //If you want to look at the cells
+    .style("fill", "transparent")
+    // .style("stroke","none")
+    .style("stroke","none")
+    // .style("pointer-events", "all")
+    .on("mouseover", function(d){
+      showTooltip(d["data"], datum, x, y, svg, width)
+    })
+
+vg.on("mouseout", removeTooltip)
+
+
+
+
+}
+function removeTooltip(){
+  d3.select("#tt-vertical").style("opacity",0)
+  d3.select("#tt-horizontal").style("opacity",0)
+  d3.select("#tt-dot").style("opacity",0)
+}
+
+
+function drawFigure(container_width){
+  drawMap(container_width)
+  drawChart(container_width)
+}
+
+
+
+
+var pymChild = new pym.Child({ renderCallback: drawFigure, polling: 500 });
+
+</script>
+</body>
