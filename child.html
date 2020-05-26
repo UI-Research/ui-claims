@@ -1,7 +1,104 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style> /* set the CSS */
+body, svg{
+  font-family: Lato;
+}
+#map-container svg{
+    margin: 0 auto;
+    /* width: 620px; */
+    display: block;
+}
+.axis text{
+  font-size: 14px;
+}
+.y.axis path{
+  display: none;
+}
+.y.axis line{
+  stroke: #dedddd;
+}
+/* class applies to select element itself, not a wrapper element */
+.select-css {
+    display: block;
+    font-size: 16px;
+    font-family: Lato;
+    font-weight: 500;
+    color: #444;
+    line-height: 1.3;
+    padding: .6em 1.4em .5em .8em;
+    width: 200px;
+    max-width: 100%; /* useful when width is set to anything other than 100% */
+    box-sizing: border-box;
+    margin: 0;
+    border: 1px solid #d2d2d2;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: 0em;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
+        for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
+        
+    */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+      linear-gradient(to bottom, #ffffff 0%,#ffffff 100%);
+    background-repeat: no-repeat, repeat;
+    /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
+    background-position: right .7em top 50%, 0 0;
+    /* icon size, then gradient */
+    background-size: .65em auto, 100%;
+}
+/* Hide arrow icon in IE browsers */
+.select-css::-ms-expand {
+    display: none;
+}
+/* Hover style */
+.select-css:hover {
+    border-color: #888;
+}
+/* Focus style */
+.select-css:focus {
+    border-color: #aaa;
+    /* It'd be nice to use -webkit-focus-ring-color here but it doesn't work on box-shadow */
+    box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+    box-shadow: 0 0 0 3px -moz-mac-focusring;
+    color: #222; 
+    outline: none;
+}
 
+/* Set options to normal weight */
+.select-css option {
+    font-weight:normal;
+}
+
+/* Support for rtl text, explicit support for Arabic and Hebrew */
+*[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+    background-position: left .7em top 50%, 0 0;
+    padding: .6em .8em .5em 1.4em;
+}
+
+/* Disabled styles */
+.select-css:disabled, .select-css[aria-disabled=true] {
+    color: graytext;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+      linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
+}
+
+.select-css:disabled:hover, .select-css[aria-disabled=true] {
+    border-color: #aaa;
+}
+
+
+path.state.highlight{
+  stroke: #fdbf11 !important;
+  stroke-width: 3px !important;
+}
+
+.state{
+  cursor: pointer;
+}
 .line {
   fill: none;
   /*stroke: steelblue;*/
@@ -14,12 +111,14 @@
   stroke: #000;
 }
 #r01Line{
-  stroke: #696969;
+  stroke: #1696d2;
 }
 #r90Line{
-  stroke: #dcdbdb;
+  stroke: #55b748;
 }
-
+.state{
+  cursor: pointer;
+}
 
 .tt-line{
   fill: none;
@@ -69,6 +168,11 @@
 http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922 */
 
 
+var lookityUppity = {"United States":"US","Alabama":"AL","Alaska":"AK","Arkansas":"AR","Arizona":"AZ","California":"CA","Colorado":"CO","Connecticut":"CT","Delaware":"DE","District of Columbia":"DC","Florida":"FL","Georgia":"GA","Hawaii":"HI","Iowa":"IA","Idaho":"ID","Illinois":"IL","Indiana":"IN","Kansas":"KS","Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA","Michigan":"MI","Minnesota":"MN","Missouri":"MO","Mississippi":"MS","Montana":"MT","North Carolina":"NC","North Dakota":"ND","Nebraska":"NE","New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM","Nevada":"NV","New York":"NY","Ohio":"OH","Oklahoma":"OK","Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC","South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Virginia":"VA","Vermont":"VT","Washington":"WA","Wisconsin":"WI","West Virginia":"WV","Wyoming":"WY"}
+
+var lookityUppityRev = {"US": "United States","AL":"Alabama","AK":"Alaska","AR":"Arkansas","AZ":"Arizona","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District of Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MO":"Missouri","MS":"Mississippi","MT":"Montana","NC":"North Carolina","ND":"North Dakota","NE":"Nebraska","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VT":"Vermont","WA":"Washington","WI":"Wisconsin","WV":"West Virginia","WY":"Wyoming"}
+
+
 
 
 //Create SVG element and append map to the SVG
@@ -93,9 +197,9 @@ function drawMap(container_width) {
 
   }
 
-  d3.csv("data/states-data.csv").then(function(data) {
+  d3.csv("data/states-data.csv", function(data) {
 
-  d3.json("data/us-states.json").then(function(json) {
+  d3.json("data/us-states.json", function(json) {
   for (var i = 0; i < data.length; i++) {
   var dataState = data[i].name;
   var dataAbbr = data[i].abbr;
@@ -184,11 +288,10 @@ function drawMap(container_width) {
   })
   .attr("stroke-width", 1.2)
   .attr("stroke", "#353535")
-  var dcText = svg.append("a")
-  .attr("xlink:href", buildLink("DC"))
-  .attr('target','_blank')
+  var dcText = svg.append("g")
   .data(dcData)
-  .append("text")
+  dcText.append("text")
+  
   .text(function(d) { 
   if (IS_PHONE) {
   return "DC";
@@ -202,7 +305,12 @@ function drawMap(container_width) {
   } else { 
   return .215*(width)}
   })
-  .attr("class", "state-label state")    
+  .attr("class", "state-label state")   
+  
+  dcText.on("click", function(d){
+      dispatch.call("clickState", null, "DC")
+
+  })
 
   //STATE TOOLTIP
 
@@ -214,16 +322,8 @@ function drawMap(container_width) {
   .attr('class', 'region-text')
   region.append('div')
   .attr('class', 'tooltip-title')
-  .text('STATE')
+  .text('REGION')
 
-  function selectState(selectedState) {
-  d3.selectAll(".state")
-  .classed('deselected', true)
-  .classed('selected', false)
-  d3.select(".state." + selectedState)
-  .classed('selected', true)
-  .classed("deselected", false)
-  }
 
   d3.selectAll(".state")
   .on("mouseover", function (d) {
@@ -238,29 +338,39 @@ function drawMap(container_width) {
 
   var dispatch = d3.dispatch("hoverState", "dehoverState", "clickState");
 
-  region.append("div")
-  .attr('class', 'tooltip-data')
-  .text("Click on a state")
+
 
   dispatch.on("clickState", function (selectedState) {
     updateChart(selectedState)
   })
 
   dispatch.on("hoverState", function (selectedState) {
-  var stateName = d3.select(this).datum().properties.name
-  selectState(selectedState);
-  d3.select(".tooltip-data")
-  .html(stateName)
+    var stateName = d3.select(this).datum().properties.name
+
+
+
+    state = selectedState.replace("state","").replace("deselected","").replace("selected","").replace("highlight"
+    ).replace("clicked","").replace("undefined","").trim()
+    d3.selectAll("path.state").classed("highlight", false)
+    d3.select("path.state." + state)
+    .classed("highlight", true)
+    console.log(state)
+    d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
+
+
   });
   dispatch.on("dehoverState", function() {
-  d3.select(".tooltip-data")
-  .html("Click on a state")
+    var cl = d3.select("path.state.clicked")
+    if(cl.node() != null) dispatch.call("hoverState", cl.node(), (cl.attr('class')))
+    else d3.selectAll("path.state").classed("highlight", false)
+
+
+
   })
   // dispatch.on("clickState", function() {
   // d3.select(".tooltip-data")
   // .html("Click on a state")
   // })
-
 
   //STATE DROPDOWN MENU
   var defaultOptionName = ""
@@ -272,21 +382,22 @@ function drawMap(container_width) {
   var dropdownMenu =dropdown.append('div')
   .attr('class', 'dropdown-container')
   .append("select")
+  dropdownMenu.attr("class","select-css")
   // .attr("onChange", "window.location.href=this.value")
-  .attr("onChange", "window.open(this.value, '_blank') ")
-  .selectAll("option")
-  .data(json.features)
+  dropdownMenu.on("change", function(){
+    updateChart(lookityUppity[this.value])
+  })
+
+var ddData = json.features
+ddData.unshift({"properties":{"name":"United States"}})  
+dropdownMenu.selectAll("option")
+  .data(ddData)
   .enter()
   .append("option")
+  .attr("class", function(d){ return d.properties.abbr})
   .text(function(d) {return d.properties.name})
-  .attr("value",function(d){return d.properties.link;})
-  d3.select('select')
-  .append("option")
-  .text("Select a state")
-  .attr("value","")
-  .attr("selected", "selected")
-  .attr("disabled", "disabled")
-  .attr("hidden", "hidden")
+  
+
 
 
   });
@@ -305,9 +416,9 @@ function drawChart(container_width){
 
 
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 20, bottom: 30, left: 80},
+  var margin = {top: 20, right: 120, bottom: 30, left: 80},
   width = container_width - margin.left - margin.right,
-  height = 500 - margin.top - margin.bottom;
+  height = container_width*.5 - margin.top - margin.bottom;
 
 
 
@@ -362,7 +473,7 @@ function drawChart(container_width){
   if(val == "") return undefined
   else return +val
   }
-  d3.csv("data/ui-claims.csv").then(function(data) {
+  d3.csv("data/ui-claims.csv", function(data) {
 
     d3.select("#allData").datum([data])
 
@@ -381,6 +492,16 @@ function drawChart(container_width){
   y.domain([0, d3.max(datum, function(d) {
   return Math.max(d.recession_07, d.covid, d.recession_90, d.recession_01) * 1.2; })]);
 
+
+  svg.append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y).tickSize(-width));
+
+  // Add the X Axis
+  svg.append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
 
   svg.append("path")
   // .data([data])
@@ -418,16 +539,8 @@ function drawChart(container_width){
 
 
 
-  // Add the X Axis
-  svg.append("g")
-  .attr("class", "x axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x));
-
   // Add the Y Axis
-  svg.append("g")
-  .attr("class", "y axis")
-  .call(d3.axisLeft(y));
+
 
 
 
@@ -457,7 +570,6 @@ vg.selectAll("path")
 vg.on("mouseout",  removeTooltip);
 
 
-
     svg.append("line")
       .attr("class", "tt-line")
       .attr("id", "tt-horizontal")
@@ -476,6 +588,9 @@ vg.on("mouseout",  removeTooltip);
       .attr("r",6)
       .style("opacity", 0)
 
+var cd = datum.filter(function(d){ return typeof(d.covid) != "undefined"})
+showTooltip(cd[cd.length-1], datum, x, y, svg, width)
+
 
   });
 }
@@ -484,7 +599,7 @@ vg.on("mouseout",  removeTooltip);
 
 
 
-function showTooltip(d, datum, x, y, svg, width){
+function showTooltip(d, datum, x, y, svg, width, height){
   
   d3.select("#tt-dot")
     .style("opacity",1)
@@ -514,7 +629,7 @@ function showTooltip(d, datum, x, y, svg, width){
 
 
     var cy = y(d.covid);
-    var beginning2 = height-cy,
+    var beginning2 = -cy,
         end2 = pathLength,
         target2;
     while (true) {
@@ -529,7 +644,6 @@ function showTooltip(d, datum, x, y, svg, width){
     }
 
 
-    // console.log(target)
 
 
 
@@ -562,11 +676,24 @@ function showTooltip(d, datum, x, y, svg, width){
 }
 
 function updateChart(state){
+state = state.replace("state","").replace("deselected","").replace("selected","").replace("highlight","").replace("clicked","").replace("undefined","").trim()
+
+  console.log(state)
+  
+  d3.selectAll("path.state").classed("highlight", false).classed("clicked", false)
+  d3.select("path.state." + state)
+    .classed("highlight", true)
+    .classed("clicked", true)
+
+  d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
+
+$(".select-css").val(lookityUppityRev[state])
+
 
   var container_width = getContainerWidth()
-  var margin = {top: 20, right: 20, bottom: 30, left: 80},
+  var margin = {top: 20, right: 120, bottom: 30, left: 80},
   width = container_width - margin.left - margin.right,
-  height = 500 - margin.top - margin.bottom;
+  height = container_width*.5 - margin.top - margin.bottom;
 
 
 
@@ -584,6 +711,9 @@ function updateChart(state){
 
   // define the 2nd line
   var r07Line = d3.line()
+  .defined(function(d) {
+  return typeof(d.recession_07) != "undefined";
+  })
   .x(function(d) { if(typeof(d.recession_07) != "undefined") return x(d.week); })
   .y(function(d) { if(typeof(d.recession_07) != "undefined") return y(d.recession_07); });
 
@@ -605,7 +735,7 @@ function updateChart(state){
 
 
   var data = getAllData()
-    var datum = data.filter(function(d){ return d.state == state.replace("state","").replace("deselected","").replace("selected","").trim()})
+    var datum = data.filter(function(d){ return d.state == state})
 
 
   // Scale the range of the data
@@ -620,7 +750,12 @@ function updateChart(state){
   d3.select("#r07Line")
   .datum(datum)
   .transition()
-  .attr("d", r07Line);
+  .attr("d", r07Line)
+  .on("end", function(){
+    var cd = datum.filter(function(d){ return typeof(d.covid) != "undefined"})
+showTooltip(cd[cd.length-1], datum, x, y, svg, width)
+
+  });
 
   d3.select("#r01Line")
   .datum(datum)
@@ -635,7 +770,7 @@ function updateChart(state){
 
   d3.select(".y.axis")
   .transition()
-  .call(d3.axisLeft(y));
+  .call(d3.axisLeft(y).tickSize(-width));
 
 
 d3.selectAll("#voronoiG").remove()
@@ -664,7 +799,7 @@ vg.selectAll("path")
     .style("stroke","none")
     // .style("pointer-events", "all")
     .on("mouseover", function(d){
-      showTooltip(d["data"], datum, x, y, svg, width)
+      showTooltip(d["data"], datum, x, y, svg, width,height)
     })
 
 vg.on("mouseout", removeTooltip)
@@ -674,9 +809,9 @@ vg.on("mouseout", removeTooltip)
 
 }
 function removeTooltip(){
-  d3.select("#tt-vertical").style("opacity",0)
-  d3.select("#tt-horizontal").style("opacity",0)
-  d3.select("#tt-dot").style("opacity",0)
+  // d3.select("#tt-vertical").style("opacity",0)
+  // d3.select("#tt-horizontal").style("opacity",0)
+  // d3.select("#tt-dot").style("opacity",0)
 }
 
 
