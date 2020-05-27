@@ -669,7 +669,7 @@ function drawChart(container_width){
   // Scale the range of the data
   x.domain(d3.extent(datum, function(d) { return d.week; }));
   y.domain([0, d3.max(datum, function(d) {
-  return Math.max(d.recession_07, d.covid, d.recession_90, d.recession_01) * 1.2; })]);
+  return d3.max([d.recession_07, d.covid, d.recession_90, d.recession_01]) * 1.2; })]);
 
 
   svg.append("g")
@@ -976,7 +976,8 @@ $(".select-css").val(lookityUppityRev[state])
   // Scale the range of the data
   x.domain(d3.extent(datum, function(d) { return d.week; }));
   y.domain([0, d3.max(datum, function(d) {
-  return Math.max(d.recession_07, d.covid, d.recession_90, d.recession_01) * 1.2; })]);
+    console.log(d)
+  return d3.max([d.recession_07, d.covid, d.recession_90, d.recession_01]) * 1.2; })]);
   d3.select("#covidLine")
   .datum(datum)
   .transition()
