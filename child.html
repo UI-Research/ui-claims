@@ -4,6 +4,31 @@
 body, svg{
   font-family: Lato;
 }
+#figureTitle{
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+#mapLegend{
+      display: inline-block;
+    position: relative;
+    top: 7px;
+}
+#ml-title{
+font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+.ml-item{
+    width: 38px;
+    height: 18px;
+    display: inline-block;
+}
+.ml-label{
+  font-size: 12px;
+  position: relative;
+  top: 20px;
+  left: -6px;
+}
 #map-container svg{
     margin: 0 auto;
     /* width: 620px; */
@@ -17,6 +42,12 @@ body, svg{
 }
 .y.axis line{
   stroke: #dedddd;
+}
+.tooltip-container{
+  left: 0px;
+  position: relative;
+  display: inline-block;
+  margin-right: 31px;
 }
 /* class applies to select element itself, not a wrapper element */
 .select-css {
@@ -108,7 +139,7 @@ path.state.highlight{
   stroke: #fdbf11;
 }
 #r07Line{
-  stroke: #000;
+  stroke: #353535;
 }
 #r01Line{
   stroke: #1696d2;
@@ -131,24 +162,141 @@ path.state.highlight{
   fill: #fff
 }
 
+
+#lineParent{
+  position: relative;
+}
+.lineTt.y{
+position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 190px;
+    font-size: 14px;
+    background: rgba(255,255,255,.8)
+}
+.lineTt.x{
+    left: 0px;
+    width: 190px;
+    font-size: 14px;
+}
+.lineTt span{
+  font-weight: 900;
+  color: #1696d2;
+}
+.tt-row{
+  margin-bottom: 5px;
+}
+.ll-item{
+  display: inline-block;
+  font-size: 14px;
+  margin-right: 18px;
+}
+.ll-top span{
+  width: 17px;
+  height: 3px;
+  background: black;
+  /* content: "."; */
+  display: inline-block;
+  margin-right: 5px;
+  position: relative;
+  top: -3px;
+}
+.ll-top.r90 span{
+  background: #55b748
+}
+.ll-top.r01 span{
+  background: #1696d2
+}
+.ll-top.r07 span{
+  background: #353535
+}
+.ll-top.covid span{
+  background: #fdbf11
+}
+.ll-bottom{
+  font-size: 12px;
+  margin-top: 3px;
+  color: #696969;
+}
+#yAxisLabel{
+    font-size: 14px;
+    font-style: italic;
+    position: relative;
+    top: 22px;
+}
+#xAxisLabel{
+      left: calc(50% - 100px);
+    font-size: 14px;
+    font-style: italic;
+    position: relative;
+}
 </style>
 <body>
 
 <div id = "allData"></div>
 <div id = "containerWidth"></div>
+<div id = "stateAbbr"></div>
 <div id = "isMobile"></div>
 <div id = "isPhone"></div>
-<div id = "figureTitle">This is the title of the overall figure</div>
+<div id = "figureTitle">Unemployment Insurance Claims by State Since Startof COVID-19</div>
 <div id="graph-container" class="wrapper">
 <div id="tooltip-header">
 <div class="tooltip-container">
+</div>
+<div id = "mapLegend">
+  <div id = "ml-title">Share of UI Claims among 18+ Population</div>
+  <div id = "ml-main"></div>
 </div>
 </div>
 <div id="map-container">
 </div>
 </div>
 
-<div id = "lineContainer"></div>
+<div id = "lineParent">
+  <div id = "lineLegend">
+    <div class = "ll-item">
+      <div class = "ll-top r90"><span></span>1990 Recession</div>
+      <div class = "ll-bottom">Beginning 7/7/1990</div>
+    </div>
+
+    <div class = "ll-item">
+      <div class = "ll-top r01"><span></span>2001 Recession</div>
+      <div class = "ll-bottom">Beginning 3/31/2001</div>
+    </div>
+
+    <div class = "ll-item">
+      <div class = "ll-top r07"><span></span>2007 Recession</div>
+      <div class = "ll-bottom">Beginning 12/29/2007</div>
+    </div>
+
+    <div class = "ll-item">
+      <div class = "ll-top covid"><span></span>COVID-19</div>
+      <div class = "ll-bottom">Beginning 3/14/2020</div>
+    </div>
+  </div>
+  <div id = "yAxisLabel">Total Unemployment Insurance Claims</div>
+  <div id = "lineContainer"></div>
+  <div id = "xAxisLabel">Weeks since the start of each recession</div>
+  <div class = "lineTt x">
+    <div class = "tt-row">
+      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been made in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> weeks.
+    </div>
+    <div class = "tt-row">
+      That&rsquo;s <span class = "tt-mult"></span> times as many claims as the Great Recession had over the same period.
+    </div>
+  </div>
+  <div class = "lineTt y">
+    <div class = "tt-row">
+      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been made in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> weeks.
+    </div>
+    <div class = "tt-row intersect">
+      That&rsquo;s <span class = "tt-"></span> about as many claims as there were at week <span class = "tt-equiv"></span> in the Great Recession.
+    </div>
+    <div class = "tt-row surpass">
+      It only took <span class = "tt-surpass"></span> weeks for <span class = "tt-state">the United States</span> to surpass the total claims from the Great Recession.
+    </div>
+  </div>
+</div>
 
 <script src="js/vendor/jquery-2.2.1.min.js"></script>
 <script src="js/vendor/jquery-ui.min.js"></script>
@@ -172,7 +320,7 @@ var lookityUppity = {"United States":"US","Alabama":"AL","Alaska":"AK","Arkansas
 
 var lookityUppityRev = {"US": "United States","AL":"Alabama","AK":"Alaska","AR":"Arkansas","AZ":"Arizona","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District of Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MO":"Missouri","MS":"Mississippi","MT":"Montana","NC":"North Carolina","ND":"North Dakota","NE":"Nebraska","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VT":"Vermont","WA":"Washington","WI":"Wisconsin","WV":"West Virginia","WY":"Wyoming"}
 
-
+var WEEK_TOTAL = 79;
 
 
 //Create SVG element and append map to the SVG
@@ -182,6 +330,9 @@ function getAllData(){
 }
 function getContainerWidth(){
   return d3.select("#containerWidth").datum()[0]
+}
+function getState(){
+    return d3.select("#stateAbbr").datum()[0]
 }
 
 
@@ -245,6 +396,21 @@ function drawMap(container_width) {
   var colorScale = d3.scaleThreshold()
     .domain([.05, .10, .15, .20, .25])
     .range(colors);
+
+
+  d3.select("#ml-main").selectAll(".ml-item")
+    .data(colorScale.domain())
+    .enter()
+    .append("div")
+    .attr("class", "ml-item")
+    .style("background", function(d,i){
+      return colors[i+1]
+    })
+    .append("div")
+    .attr("class","ml-label")
+    .text(function(d,i){
+      return d3.format(".0%")(d)
+    })
 
 
   svg = d3.select("#map-container")
@@ -318,11 +484,6 @@ function drawMap(container_width) {
   var tooltip = d3.select(".tooltip-container")
 
 
-  var region = tooltip.append('div')
-  .attr('class', 'region-text')
-  region.append('div')
-  .attr('class', 'tooltip-title')
-  .text('REGION')
 
 
   d3.selectAll(".state")
@@ -351,12 +512,14 @@ function drawMap(container_width) {
 
     state = selectedState.replace("state","").replace("deselected","").replace("selected","").replace("highlight"
     ).replace("clicked","").replace("undefined","").trim()
-    d3.selectAll("path.state").classed("highlight", false)
-    d3.select("path.state." + state)
-    .classed("highlight", true)
-    console.log(state)
-    d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
 
+    if(state != "US"){
+      d3.selectAll("path.state").classed("highlight", false)
+        d3.select("path.state." + state)
+        .classed("highlight", true)
+        
+        d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
+    }
 
   });
   dispatch.on("dehoverState", function() {
@@ -416,7 +579,7 @@ function drawChart(container_width){
 
 
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 120, bottom: 30, left: 80},
+  var margin = {top: 20, right: 210, bottom: 30, left: 74},
   width = container_width - margin.left - margin.right,
   height = container_width*.5 - margin.top - margin.bottom;
 
@@ -501,7 +664,7 @@ function drawChart(container_width){
   svg.append("g")
   .attr("class", "x axis")
   .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x));
+  .call(d3.axisBottom(x).tickValues([10,20,79,30,40,50,60,70,79]));
 
   svg.append("path")
   // .data([data])
@@ -600,13 +763,23 @@ showTooltip(cd[cd.length-1], datum, x, y, svg, width)
 
 
 function showTooltip(d, datum, x, y, svg, width, height){
-  
+  var comma = d3.format(",")
+  var mult = d3.format(".1f")
+
   d3.select("#tt-dot")
     .style("opacity",1)
     .attr("cx", x(d.week))
     .attr("cy", y(d.covid))
 
 // var testHorizontal = 
+    // d3.selectAll(:)
+
+    d3.selectAll(".tt-weeks").text(d.week)
+    d3.selectAll(".tt-claims").text(comma(d.covid))
+    d3.selectAll(".tt-mult").text(mult(d.covid/d.recession_07))
+
+    if(typeof(datum[d.week]["covid"]) == "undefined"){ d3.selectAll(".tt-tense").text("have") }
+    else{ d3.selectAll(".tt-tense").text("had") }
 
 
 
@@ -628,6 +801,8 @@ function showTooltip(d, datum, x, y, svg, width, height){
     }
 
 
+
+
     var cy = y(d.covid);
     var beginning2 = -cy,
         end2 = pathLength,
@@ -644,8 +819,20 @@ function showTooltip(d, datum, x, y, svg, width, height){
     }
 
 
+d3.select(".lineTt.y")
+.transition()
+.style("top", function(){
+  return (y(d.covid) + 68) + "px"
+})
+
+.style("right", function(){
+  return (width - pos2.x) + "px"
+})
 
 
+d3.select(".lineTt.x")
+.transition()
+.style("margin-left", (80 + x(d.week)) + "px")
 
 
   d3.select("#tt-vertical")
@@ -666,6 +853,27 @@ function showTooltip(d, datum, x, y, svg, width, height){
     .attr("y2", y(d.covid))
     .style("opacity",1)
 
+
+
+if(datum[WEEK_TOTAL - 1]["recession_07"] > d.covid){
+  d3.select(".tt-row.intersect").style("display","block")
+  d3.select(".tt-row.surpass").style("display","none")
+  d3.select(".tt-equiv").text(Math.round(x.invert(pos2.x)))  
+}else{
+  d3.select(".tt-row.intersect").style("display","none")
+  d3.select(".tt-row.surpass").style("display","block")
+  for(var i = 0; i <= d.week; i++){
+    if(datum[i]["covid"] < datum[WEEK_TOTAL - 1]["recession_07"]){
+      // console.log(datum[i]["recession_07"], d.covid, i)
+      continue
+    }
+    else{
+      d3.select(".tt-surpass").text(i+1);
+      break;
+    }
+
+  }
+}
   // d3.select("#tt-vertical")
   //   .attr("x1", x(d.week))
   //   .attr("x2" ,x(d.week))
@@ -676,22 +884,31 @@ function showTooltip(d, datum, x, y, svg, width, height){
 }
 
 function updateChart(state){
+    d3.select("#stateAbbr").datum([state])
 state = state.replace("state","").replace("deselected","").replace("selected","").replace("highlight","").replace("clicked","").replace("undefined","").trim()
 
-  console.log(state)
-  
-  d3.selectAll("path.state").classed("highlight", false).classed("clicked", false)
-  d3.select("path.state." + state)
-    .classed("highlight", true)
-    .classed("clicked", true)
+d3.selectAll(".tt-state")
+  .text(function(){
+    return  (state == "US" || state == "DC") ? "the " + lookityUppityRev[state] : lookityUppityRev[state]
+  })
 
-  d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
+  console.log(state)
+
+  if(state != "US"){
+  
+    d3.selectAll("path.state").classed("highlight", false).classed("clicked", false)
+    d3.select("path.state." + state)
+      .classed("highlight", true)
+      .classed("clicked", true)
+
+    d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
+  }
 
 $(".select-css").val(lookityUppityRev[state])
 
 
   var container_width = getContainerWidth()
-  var margin = {top: 20, right: 120, bottom: 30, left: 80},
+  var margin = {top: 20, right: 210, bottom: 30, left: 74},
   width = container_width - margin.left - margin.right,
   height = container_width*.5 - margin.top - margin.bottom;
 
@@ -741,7 +958,7 @@ $(".select-css").val(lookityUppityRev[state])
   // Scale the range of the data
   x.domain(d3.extent(datum, function(d) { return d.week; }));
   y.domain([0, d3.max(datum, function(d) {
-  return Math.max(d.recession_07, d.covid) * 1.2; })]);
+  return Math.max(d.recession_07, d.covid, d.recession_90, d.recession_01) * 1.2; })]);
   d3.select("#covidLine")
   .datum(datum)
   .transition()
@@ -818,9 +1035,10 @@ function removeTooltip(){
 function drawFigure(container_width){
   drawMap(container_width)
   drawChart(container_width)
+  // updateChart(getState())
 }
 
-
+d3.select("#stateAbbr").datum(["US"])
 
 
 var pymChild = new pym.Child({ renderCallback: drawFigure, polling: 500 });

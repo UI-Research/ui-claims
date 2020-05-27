@@ -33,7 +33,7 @@ for sheetName in sheetNames:
         head = next(cr)
         weekNum = 1
         for row in cr:
-            if weekNum > 80:
+            if weekNum >= 80:
                 break
             outWriter.writerow([ weekNum, sheetName, row[12], row[13], row[14], row[15] ])
             weekNum += 1
