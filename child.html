@@ -16,6 +16,7 @@ body, svg{
     right: 40px;
     position: absolute;
     top: 127px;
+    width: 240px;
 }
 #ml-title{
 font-size: 14px;
@@ -57,6 +58,7 @@ font-size: 14px;
     display: inline-block;
     margin-right: 31px;
     top: 96px;
+    z-index: 1000;
 }
 /* class applies to select element itself, not a wrapper element */
 .select-css {
@@ -237,14 +239,22 @@ position: absolute;
     top: 22px;
 }
 #xAxisLabel{
-      left: calc(50% - 100px);
+    left: calc(50% - 180px);
     font-size: 14px;
     font-style: italic;
     position: relative;
+    width: fit-content;
 }
 .tt-tense{
   font-weight: normal !important;
   color: #353535 !important;
+}
+#lineTitle{
+font-size: 22px;
+    margin-bottom: 17px;
+}
+#lineContainer svg{
+  margin-top: 10px;
 }
 </style>
 <body>
@@ -254,13 +264,13 @@ position: absolute;
 <div id = "stateAbbr"></div>
 <div id = "isMobile"></div>
 <div id = "isPhone"></div>
-<div id = "figureTitle">Unemployment Insurance Claims by State Since Startof COVID-19</div>
+<div id = "figureTitle">Unemployment Insurance Claims by State Since March 14, 2020</div>
 <div id="graph-container" class="wrapper">
 <div id="tooltip-header">
 <div class="tooltip-container">
 </div>
 <div id = "mapLegend">
-  <div id = "ml-title">Share of UI Claims among 18+ Population</div>
+  <div id = "ml-title">Share of Unemployment Insurance claims among 18+ population</div>
   <div id = "ml-main"></div>
 </div>
 </div>
@@ -269,20 +279,21 @@ position: absolute;
 </div>
 
 <div id = "lineParent">
+  <div id = "lineTitle"><span id = "title-state">All US</span> Unemployment Insurance Claims as of <span id = "title-date"></span></div>
   <div id = "lineLegend">
     <div class = "ll-item">
-      <div class = "ll-top r90"><span></span>1990 Recession</div>
-      <div class = "ll-bottom">Beginning 7/7/1990</div>
+      <div class = "ll-top r90"><span></span>1990 recession</div>
+      <div class = "ll-bottom">Beginning 7/14/1990</div>
     </div>
 
     <div class = "ll-item">
-      <div class = "ll-top r01"><span></span>2001 Recession</div>
-      <div class = "ll-bottom">Beginning 3/31/2001</div>
+      <div class = "ll-top r01"><span></span>2001 recession</div>
+      <div class = "ll-bottom">Beginning 3/17/2001</div>
     </div>
 
     <div class = "ll-item">
-      <div class = "ll-top r07"><span></span>2007 Recession</div>
-      <div class = "ll-bottom">Beginning 12/29/2007</div>
+      <div class = "ll-top r07"><span></span>2007 recession</div>
+      <div class = "ll-bottom">Beginning 12/15/2007</div>
     </div>
 
     <div class = "ll-item">
@@ -290,26 +301,19 @@ position: absolute;
       <div class = "ll-bottom">Beginning 3/14/2020</div>
     </div>
   </div>
-  <div id = "yAxisLabel">Total Unemployment Insurance Claims</div>
+  <div id = "yAxisLabel">Total Unemployment Insurance claims</div>
   <div id = "lineContainer"></div>
   <div id = "xAxisLabel">Weeks since the start of each recession</div>
-  <div class = "lineTt x">
-    <div class = "tt-row">
-      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been made in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> weeks.
-    </div>
-    <div class = "tt-row">
-      That&rsquo;s <span class = "tt-mult"></span> times as many claims as the Great Recession had over the same period.
-    </div>
-  </div>
+
   <div class = "lineTt y">
     <div class = "tt-row">
-      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been made in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> weeks.
+      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been filed in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> weeks.
     </div>
     <div class = "tt-row intersect">
       That&rsquo;s <span class = "tt-"></span> about as many claims as there were at week <span class = "tt-equiv"></span> in the Great Recession.
     </div>
     <div class = "tt-row surpass">
-      It only took <span class = "tt-surpass"></span> weeks for <span class = "tt-state">the United States</span> to surpass the total claims from the Great Recession.
+      It only took <span class = "tt-surpass"></span> weeks for <span class = "tt-state">the United States</span> to surpass its total claims during the Great Recession
     </div>
   </div>
 </div>
@@ -336,7 +340,7 @@ var lookityUppity = {"United States":"US","Alabama":"AL","Alaska":"AK","Arkansas
 
 var lookityUppityRev = {"US": "United States","AL":"Alabama","AK":"Alaska","AR":"Arkansas","AZ":"Arizona","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District of Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MO":"Missouri","MS":"Mississippi","MT":"Montana","NC":"North Carolina","ND":"North Dakota","NE":"Nebraska","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VT":"Vermont","WA":"Washington","WI":"Wisconsin","WV":"West Virginia","WY":"Wyoming"}
 
-var WEEK_TOTAL = 79;
+var WEEK_TOTAL = 81;
 
 
 //Create SVG element and append map to the SVG
@@ -594,6 +598,9 @@ function drawChart(container_width){
   $lineContainer.empty();
 
 
+
+
+
   // set the dimensions and margins of the graph
   var margin = {top: 20, right: 210, bottom: 30, left: 74},
   width = container_width - margin.left - margin.right,
@@ -680,7 +687,7 @@ function drawChart(container_width){
   svg.append("g")
   .attr("class", "x axis")
   .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x).tickValues([10,20,79,30,40,50,60,70,79]));
+  .call(d3.axisBottom(x).tickValues([10,20,30,40,50,60,70,81]));
 
   svg.append("path")
   // .data([data])
@@ -756,12 +763,6 @@ vg.on("mouseout",  removeTooltip);
       .style("opacity", 0)
 
 
-    svg.append("line")
-      .attr("class", "tt-line")
-      .attr("id", "tt-vertical")
-      .attr("stroke-dasharray", "4 4")
-      .style("opacity", 0)
-
     svg.append("circle")
       .attr("id", "tt-dot")
       .attr("r",6)
@@ -769,6 +770,19 @@ vg.on("mouseout",  removeTooltip);
 
 var cd = datum.filter(function(d){ return typeof(d.covid) != "undefined"})
 showTooltip(cd[cd.length-1], datum, x, y, svg, width)
+
+// console.log(cd.length)
+startDay = new Date("5/28/2020")
+weeksOut = cd.length - 10
+
+daysOut = startDay.getDate() + weeksOut*7
+startDay.setDate(daysOut)
+
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+d3.select("#title-date").text( months[startDay.getMonth()] + " " + startDay.getDate() + ", " + startDay.getFullYear() )
+
+
+
 
 
   });
@@ -839,7 +853,7 @@ d3.select(".lineTt.y")
 .style("opacity",1)
 .transition()
 .style("top", function(){
-  return (y(d.covid) + 118) + "px"
+  return (y(d.covid) + 171) + "px"
 })
 
 .style("right", function(){
@@ -847,19 +861,7 @@ d3.select(".lineTt.y")
 })
 
 
-d3.select(".lineTt.x")
-.style("opacity",0)
-.transition()
-.style("margin-left", (80 + x(d.week)) + "px")
 
-
-  d3.select("#tt-vertical")
-    .style("opacity",0)
-
-    .attr("x1", x(d.week))
-    .attr("x2" ,x(d.week))
-    .attr("y1", y(d.covid))
-    .attr("y2", pos.y)
 
 
   //   var ptH = path_line_intersections(d3.select("#r07Line"), d3.select("#tt-horizontal"), 500)
@@ -909,6 +911,10 @@ d3.selectAll(".tt-state")
   .text(function(){
     return  (state == "US" || state == "DC") ? "the " + lookityUppityRev[state] : lookityUppityRev[state]
   })
+
+d3.select("#title-state").text(function(){
+  return (state == "US") ? "All US" : lookityUppityRev[state];
+})
 
   console.log(state)
 
