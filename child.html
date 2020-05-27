@@ -3,15 +3,19 @@
 <style> /* set the CSS */
 body, svg{
   font-family: Lato;
+  color: #353535;
 }
 #figureTitle{
     font-size: 22px;
     margin-bottom: 6px;
 }
 #mapLegend{
-      display: inline-block;
+    display: inline-block;
     position: relative;
     top: 7px;
+    right: 40px;
+    position: absolute;
+    top: 127px;
 }
 #ml-title{
 font-size: 14px;
@@ -29,10 +33,14 @@ font-size: 14px;
   top: 20px;
   left: -6px;
 }
+#map-container{
+  margin-bottom: 50px;
+}
 #map-container svg{
-    margin: 0 auto;
-    /* width: 620px; */
-    display: block;
+    position: absolute;
+    top: 32px;
+    z-index: 100;
+    left: 150px;
 }
 .axis text{
   font-size: 14px;
@@ -44,10 +52,11 @@ font-size: 14px;
   stroke: #dedddd;
 }
 .tooltip-container{
-  left: 0px;
-  position: relative;
-  display: inline-block;
-  margin-right: 31px;
+    left: 0px;
+    position: relative;
+    display: inline-block;
+    margin-right: 31px;
+    top: 96px;
 }
 /* class applies to select element itself, not a wrapper element */
 .select-css {
@@ -164,8 +173,11 @@ path.state.highlight{
 
 
 #lineParent{
-  position: relative;
-}
+    position: relative;
+    margin-top: 319px;
+    border-top: 2px solid #d2d2d2;
+    padding-top: 50px;
+  }
 .lineTt.y{
 position: absolute;
     top: 0px;
@@ -229,6 +241,10 @@ position: absolute;
     font-size: 14px;
     font-style: italic;
     position: relative;
+}
+.tt-tense{
+  font-weight: normal !important;
+  color: #353535 !important;
 }
 </style>
 <body>
@@ -380,7 +396,7 @@ function drawMap(container_width) {
   aspect_width = 15;
   aspect_height = 8;
   margin = { top: 0, right: 20, bottom: 0, left: 20 };
-  width= container_width*.7
+  width= container_width*.6
   height = Math.ceil((width * aspect_height) / aspect_width) - margin.top - margin.bottom; 
 
   // D3 Projection
@@ -820,9 +836,10 @@ function showTooltip(d, datum, x, y, svg, width, height){
 
 
 d3.select(".lineTt.y")
+.style("opacity",1)
 .transition()
 .style("top", function(){
-  return (y(d.covid) + 68) + "px"
+  return (y(d.covid) + 118) + "px"
 })
 
 .style("right", function(){
@@ -831,12 +848,13 @@ d3.select(".lineTt.y")
 
 
 d3.select(".lineTt.x")
+.style("opacity",0)
 .transition()
 .style("margin-left", (80 + x(d.week)) + "px")
 
 
   d3.select("#tt-vertical")
-    .style("opacity",1)
+    .style("opacity",0)
 
     .attr("x1", x(d.week))
     .attr("x2" ,x(d.week))
