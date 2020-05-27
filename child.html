@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic,900" rel="stylesheet" type="text/css">
+
 <style> /* set the CSS */
 body, svg{
   font-family: Lato;
@@ -10,12 +12,9 @@ body, svg{
     margin-bottom: 6px;
 }
 #mapLegend{
-    display: inline-block;
-    position: relative;
-    top: 7px;
-    right: 40px;
+    right: 120px;
     position: absolute;
-    top: 127px;
+    top: 256px;
     width: 240px;
 }
 #ml-title{
@@ -177,8 +176,6 @@ path.state.highlight{
 #lineParent{
     position: relative;
     margin-top: 319px;
-    border-top: 2px solid #d2d2d2;
-    padding-top: 50px;
   }
 .lineTt.y{
 position: absolute;
@@ -250,7 +247,7 @@ position: absolute;
   color: #353535 !important;
 }
 #lineTitle{
-font-size: 22px;
+font-size: 18px;
     margin-bottom: 17px;
 }
 #lineContainer svg{
@@ -307,7 +304,7 @@ font-size: 22px;
 
   <div class = "lineTt y">
     <div class = "tt-row">
-      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been filed in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> weeks.
+      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been filed in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> week<span class = "tt-plural">s</span>.
     </div>
     <div class = "tt-row intersect">
       That&rsquo;s <span class = "tt-"></span> about as many claims as there were at week <span class = "tt-equiv"></span> in the Great Recession.
@@ -805,6 +802,9 @@ function showTooltip(d, datum, x, y, svg, width, height){
     // d3.selectAll(:)
 
     d3.selectAll(".tt-weeks").text(d.week)
+    d3.selectAll(".tt-plural").text(function(){
+      return (d.week == 1) ? "" : "s"
+    })
     d3.selectAll(".tt-claims").text(comma(d.covid))
     d3.selectAll(".tt-mult").text(mult(d.covid/d.recession_07))
 
@@ -853,7 +853,8 @@ d3.select(".lineTt.y")
 .style("opacity",1)
 .transition()
 .style("top", function(){
-  return (y(d.covid) + 171) + "px"
+  var scootch = ((d.covid/y.domain()[1]) < .15) ? 45 : 116
+  return (y(d.covid) + scootch) + "px"
 })
 
 .style("right", function(){
