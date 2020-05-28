@@ -14,7 +14,7 @@ body, svg{
 #mapLegend{
 right: calc(50% + -370px);
     position: absolute;
-    top: calc(50% + -250px);
+    top: calc(50% + -257px);
     width: 240px;
 }
 #ml-title{
@@ -178,7 +178,7 @@ path.state.highlight{
 
 #lineParent{
     position: relative;
-    margin-top: 33%;
+    margin-top: 37%;
   }
 .lineTt.y{
 position: absolute;
@@ -260,6 +260,17 @@ font-size: 18px;
   display: none;
 }
 
+#mapSource{
+position: absolute;
+    top: calc(50% - 177px);
+    font-size: 13px;
+    width: 360px;
+    left: calc(50% - 263px);
+}
+#mapSource span{
+  font-weight: bold;
+}
+
 @media(max-width: 900px){
   #isMobile{
     display: block;
@@ -268,11 +279,18 @@ font-size: 18px;
     left: 190px;
   }
   #mapLegend{
-    top: calc(50% + -260px);
+    top: calc(50% + -277px);
   }
   #lineParent{
-    margin-top: 28%;
+    margin-top: 33%;
   }
+#mapSource {
+    position: absolute;
+    top: calc(50% - 195px);
+    font-size: 13px;
+    width: 319px;
+    left: calc(50% - 195px);
+}
 }
 @media(max-width: 768px){
   #isPhone{
@@ -301,7 +319,7 @@ display: block;
     left: 14px;
   }
   #lineParent{
-    margin-top: 44%;
+    margin-top: 54%;
   }
   .lineTt.y{
     position: relative;
@@ -316,10 +334,15 @@ display: block;
   #tt-vertical{
     opacity: 1;
   }
+  #mapSource{
+left: 14px;
+    top: 0px;
+    width: 470px;
+  }
 }
 @media (max-width: 580px){
 #lineParent {
-    margin-top: 34%;
+    margin-top: 54%;
 }
 #lineTitle{
   margin-bottom: 0px;
@@ -328,9 +351,18 @@ display: block;
   margin-top: 9px;
 }
 }
-@media(max-width: 340px){
+@media(max-width: 480px){
+  #mapSource{
+    width: 280px;
+  }
   #mapLegend{
-    top: 20px;
+    top: 48px;
+  }
+  }
+@media(max-width: 340px){
+
+  #mapSource{
+    top: 28px;
   }
 }
 
@@ -354,6 +386,7 @@ display: block;
 </div>
 <div id="map-container">
 </div>
+<div id = "mapSource"><span>Source:</span> US Department of Labor; US Census Bureau, estimates of the resident population age 18 years and older: July 1, 2019.</div>
 </div>
 
 <div id = "lineParent">
@@ -493,9 +526,11 @@ function drawMap(container_width) {
 
 
   if(IS_PHONE()){
-    d3.select("#mapLegend").style("margin-top", (height + 100) + "px")
+    d3.select("#mapLegend").style("margin-top", (height + 150) + "px")
+    d3.select("#mapSource").style("margin-top", (height + 100) + "px")
   }else{
     d3.select("#mapLegend").style("margin-top", (0) + "px")
+    d3.select("#mapSource").style("margin-top", (0) + "px")
   }
   // D3 Projection
   var projection = d3.geoAlbersUsa()
