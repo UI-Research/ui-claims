@@ -12,9 +12,9 @@ body, svg{
     margin-bottom: 6px;
 }
 #mapLegend{
-    right: 120px;
+right: calc(50% + -370px);
     position: absolute;
-    top: 256px;
+    top: calc(50% + -250px);
     width: 240px;
 }
 #ml-title{
@@ -171,11 +171,14 @@ path.state.highlight{
   stroke-width: 2px;
   fill: #fff
 }
+  #tt-vertical{
+    opacity: 0;
+  }
 
 
 #lineParent{
     position: relative;
-    margin-top: 319px;
+    margin-top: 33%;
   }
 .lineTt.y{
 position: absolute;
@@ -253,6 +256,84 @@ font-size: 18px;
 #lineContainer svg{
   margin-top: 10px;
 }
+#isMobile, #isPhone{
+  display: none;
+}
+
+@media(max-width: 900px){
+  #isMobile{
+    display: block;
+  }
+  #map-container svg{
+    left: 190px;
+  }
+  #mapLegend{
+    top: calc(50% + -260px);
+  }
+  #lineParent{
+    margin-top: 28%;
+  }
+}
+@media(max-width: 768px){
+  #isPhone{
+    display: block;
+  }
+  #map-container{
+        display: block;
+    height: 200px;
+    position: initial;
+  }
+  #map-container svg {
+display: block;
+    top: 0px;
+    left: -10%;
+    position: relative;
+  }
+  .tooltip-container{
+
+    position: initial;
+    margin-top: 11px;
+  }
+  #mapLegend{
+display: block;
+    position: absolute;
+    top: 0px;
+    left: 14px;
+  }
+  #lineParent{
+    margin-top: 44%;
+  }
+  .lineTt.y{
+    position: relative;
+    height: 140px;    
+    top: -54px !important;
+    background: white;
+  }
+  #xAxisLabel {
+    left: calc(50% - 105px);
+    top: -70px;
+  }
+  #tt-vertical{
+    opacity: 1;
+  }
+}
+@media (max-width: 580px){
+#lineParent {
+    margin-top: 34%;
+}
+#lineTitle{
+  margin-bottom: 0px;
+}
+.ll-item{
+  margin-top: 9px;
+}
+}
+@media(max-width: 340px){
+  #mapLegend{
+    top: 20px;
+  }
+}
+
 </style>
 <body>
 
@@ -326,7 +407,12 @@ font-size: 18px;
 
 
 
-
+function IS_MOBILE(){
+  return d3.select("#isMobile").style("display") == "block" && d3.select("#isPhone").style("display") == "none"
+}
+function IS_PHONE(){
+  return d3.select("#isPhone").style("display") == "block"
+}
 
 /*  This visualization was made possible by modifying code provided by:
 
@@ -386,8 +472,13 @@ function drawMap(container_width) {
   }
 
   }
-  var IS_MOBILE = d3.select("#isMobile").style("display") ==  "block";
-  var IS_PHONE = d3.select("#isPhone").style("display") == "block";
+
+
+  var scalar;
+  if(IS_MOBILE()) scalar = .5
+  else if(IS_PHONE()) scalar = 1
+  else scalar = .6
+
 
   //Width and height of map
   $mapContainer = $("#map-container")
@@ -397,9 +488,15 @@ function drawMap(container_width) {
   aspect_width = 15;
   aspect_height = 8;
   margin = { top: 0, right: 20, bottom: 0, left: 20 };
-  width= container_width*.6
+  width= container_width*scalar
   height = Math.ceil((width * aspect_height) / aspect_width) - margin.top - margin.bottom; 
 
+
+  if(IS_PHONE()){
+    d3.select("#mapLegend").style("margin-top", (height + 100) + "px")
+  }else{
+    d3.select("#mapLegend").style("margin-top", (0) + "px")
+  }
   // D3 Projection
   var projection = d3.geoAlbersUsa()
   .translate([width/2, height/2])    // translate to center of screen
@@ -596,12 +693,15 @@ function drawChart(container_width){
 
 
 
-
+  var mr = (IS_PHONE()) ? 40: 210;
+  var ml = (IS_PHONE()) ? 40 : 74;
+  var mbExtra = (IS_PHONE()) ? 70 : 0
+  var hScale = (IS_PHONE()) ? .7 : .5;
 
   // set the dimensions and margins of the graph
-  var margin = {top: 20, right: 210, bottom: 30, left: 74},
+  var margin = {top: 20, right: mr, bottom: 30 + mbExtra, left: ml},
   width = container_width - margin.left - margin.right,
-  height = container_width*.5 - margin.top - margin.bottom;
+  height = container_width*hScale - margin.top - margin.bottom + mbExtra;
 
 
 
@@ -678,7 +778,7 @@ function drawChart(container_width){
 
   svg.append("g")
   .attr("class", "y axis")
-  .call(d3.axisLeft(y).tickSize(-width));
+  .call(d3.axisLeft(y).tickSize(-width).tickFormat(d3.format(".2s")));
 
   // Add the X Axis
   svg.append("g")
@@ -759,6 +859,12 @@ vg.on("mouseout",  removeTooltip);
       .attr("stroke-dasharray", "4 4")
       .style("opacity", 0)
 
+    svg.append("line")
+      .attr("class", "tt-line")
+      .attr("id", "tt-vertical")
+      .attr("stroke-dasharray", "4 4")
+
+
 
     svg.append("circle")
       .attr("id", "tt-dot")
@@ -768,7 +874,6 @@ vg.on("mouseout",  removeTooltip);
 var cd = datum.filter(function(d){ return typeof(d.covid) != "undefined"})
 showTooltip(cd[cd.length-1], datum, x, y, svg, width)
 
-// console.log(cd.length)
 startDay = new Date("5/28/2020")
 weeksOut = cd.length - 10
 
@@ -848,6 +953,17 @@ function showTooltip(d, datum, x, y, svg, width, height){
         else break; //position found
     }
 
+var ttL, ttVal;
+if(IS_PHONE()){
+  ttVal = 190 + width - pos2.x
+  console.log(ttVal)
+  if(ttVal < 190) ttVal = 190
+  if(ttVal > window.innerWidth - 20) ttVal = window.innerWidth - 20
+  ttL = "calc(100% - " +  ttVal + "px)"
+console.log(ttL)
+}else{
+  ttL = "inherit"
+}
 
 d3.select(".lineTt.y")
 .style("opacity",1)
@@ -860,6 +976,8 @@ d3.select(".lineTt.y")
 .style("right", function(){
   return (width - pos2.x) + "px"
 })
+.style("left", ttL)
+
 
 
 
@@ -875,6 +993,14 @@ d3.select(".lineTt.y")
     .style("opacity",1)
 
 
+  d3.select("#tt-vertical")
+    .attr("x1", pos2.x)
+    .attr("x2" , pos2.x)
+    .attr("y1", y(d.covid))
+    .attr("y2", y(0) + 300)
+
+
+
 
 if(datum[WEEK_TOTAL - 1]["recession_07"] > d.covid){
   d3.select(".tt-row.intersect").style("display","block")
@@ -885,7 +1011,6 @@ if(datum[WEEK_TOTAL - 1]["recession_07"] > d.covid){
   d3.select(".tt-row.surpass").style("display","block")
   for(var i = 0; i <= d.week; i++){
     if(datum[i]["covid"] < datum[WEEK_TOTAL - 1]["recession_07"]){
-      // console.log(datum[i]["recession_07"], d.covid, i)
       continue
     }
     else{
@@ -917,7 +1042,6 @@ d3.select("#title-state").text(function(){
   return (state == "US") ? "All US" : lookityUppityRev[state];
 })
 
-  console.log(state)
 
   if(state != "US"){
   
@@ -931,11 +1055,16 @@ d3.select("#title-state").text(function(){
 
 $(".select-css").val(lookityUppityRev[state])
 
+  var mr = (IS_PHONE()) ? 40: 210;
+  var ml = (IS_PHONE()) ? 40: 74
+  var mbExtra = (IS_PHONE()) ? 70 : 0
+  var hScale = (IS_PHONE()) ? .7 : .5;
+
 
   var container_width = getContainerWidth()
-  var margin = {top: 20, right: 210, bottom: 30, left: 74},
+  var margin = {top: 20, right: mr, bottom: 30 + mbExtra, left: ml},
   width = container_width - margin.left - margin.right,
-  height = container_width*.5 - margin.top - margin.bottom;
+  height = container_width*hScale - margin.top - margin.bottom + mbExtra;
 
 
 
@@ -983,7 +1112,6 @@ $(".select-css").val(lookityUppityRev[state])
   // Scale the range of the data
   x.domain(d3.extent(datum, function(d) { return d.week; }));
   y.domain([0, d3.max(datum, function(d) {
-    console.log(d)
   return d3.max([d.recession_07, d.covid, d.recession_90, d.recession_01]) * 1.2; })]);
   d3.select("#covidLine")
   .datum(datum)
@@ -1013,7 +1141,7 @@ showTooltip(cd[cd.length-1], datum, x, y, svg, width)
 
   d3.select(".y.axis")
   .transition()
-  .call(d3.axisLeft(y).tickSize(-width));
+  .call(d3.axisLeft(y).tickSize(-width).tickFormat(d3.format(".2s")));
 
 
 d3.selectAll("#voronoiG").remove()
