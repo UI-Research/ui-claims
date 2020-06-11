@@ -627,7 +627,7 @@ function drawChart(container_width){
   svg.append("g")
   .attr("class", "x axis")
   .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x).tickValues([10,20,30,40,50,60,70,81]));
+  .call(d3.axisBottom(x).tickValues([10,20,30,40,50,60,70,WEEK_TOTAL]));
 
   svg.append("path")
   // .data([data])
@@ -955,7 +955,7 @@ d3.select("#title-state").text(function(){
 
 
   // Scale the range of the data
-  x.domain(d3.extent(datum, function(d) { return d.week; }));
+  x.domain([0, WEEK_TOTAL]);
   y.domain([0, d3.max(datum, function(d) {
   return d3.max([d.recession_07, d.covid, d.recession_90, d.recession_01]) * 1.2; })]);
   d3.select("#covidLine")
