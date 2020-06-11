@@ -7,9 +7,18 @@ body, svg{
   font-family: Lato;
   color: #353535;
 }
+#dummy{
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  font-size: 22px;
+  font-weight: bold;
+}
 #figureTitle{
     font-size: 22px;
-    margin-bottom: 6px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
 }
 #mapLegend{
 right: calc(50% + -370px);
@@ -61,14 +70,10 @@ font-size: 14px;
 }
 /* class applies to select element itself, not a wrapper element */
 .select-css {
-    display: block;
-    font-size: 16px;
     font-family: Lato;
-    font-weight: 500;
     color: #444;
     line-height: 1.3;
-    padding: .6em 1.4em .5em .8em;
-    width: 200px;
+    width: 109.6px;
     max-width: 100%; /* useful when width is set to anything other than 100% */
     box-sizing: border-box;
     margin: 0;
@@ -79,6 +84,13 @@ font-size: 14px;
     -webkit-appearance: none;
     appearance: none;
     background-color: #fff;
+    display: inline-block;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 1px 10px;
+    border: none;
+    border-bottom: 3px dashed #1696d2;
+    cursor: pointer;
     /* note: bg image below uses 2 urls. The first is an svg data uri for the arrow icon, and the second is the gradient. 
         for the icon, if you want to change the color, be sure to use `%23` instead of `#`, since it's a url. You can also swap in a different svg icon or an external image reference
         
@@ -178,7 +190,7 @@ path.state.highlight{
 
 #lineParent{
     position: relative;
-    margin-top: 39%;
+    /*margin-top: 39%;*/
   }
 .lineTt.y{
 position: absolute;
@@ -240,6 +252,7 @@ position: absolute;
 }
 #xAxisLabel{
     left: calc(50% - 180px);
+    top: -10px;
     font-size: 14px;
     font-style: italic;
     position: relative;
@@ -282,7 +295,7 @@ position: absolute;
     top: calc(50% + -277px);
   }
   #lineParent{
-    margin-top: 33%;
+    /*margin-top: 33%;*/
   }
 #mapSource {
     position: absolute;
@@ -319,7 +332,7 @@ display: block;
     left: 14px;
   }
   #lineParent{
-    margin-top: 54%;
+    /*margin-top: 54%;*/
   }
   .lineTt.y{
     position: relative;
@@ -342,7 +355,7 @@ left: 14px;
 }
 @media (max-width: 580px){
 #lineParent {
-    margin-top: 54%;
+    /*margin-top: 54%;*/
 }
 #lineTitle{
   margin-bottom: 0px;
@@ -374,23 +387,65 @@ left: 14px;
 <div id = "stateAbbr"></div>
 <div id = "isMobile"></div>
 <div id = "isPhone"></div>
-<div id = "figureTitle">Unemployment Insurance Claims by State Since March 14, 2020</div>
 <div id="graph-container" class="wrapper">
-<div id="tooltip-header">
-<div class="tooltip-container">
-</div>
-<div id = "mapLegend">
-  <div id = "ml-title">Share of Unemployment Insurance claims among 18+ population</div>
-  <div id = "ml-main"></div>
-</div>
-</div>
-<div id="map-container">
-</div>
-<div id = "mapSource"><span>Source:</span> US Department of Labor; US Census Bureau, estimates of the resident population age 18 years and older: July 1, 2019.</div>
-</div>
 
 <div id = "lineParent">
-  <div id = "lineTitle"><span id = "title-state">All US</span> Unemployment Insurance Claims as of <span id = "title-date"></span></div>
+  <div id = "figureTitle">
+    <select class = "select-css">
+          <option value = "US" id = "state-option_AL">All US</option>
+          <option value = "AL" id = "state-option_AL">Alabama</option>
+          <option value = "AK" id = "state-option_AK">Alaska</option>
+          <option value = "AZ" id = "state-option_AZ">Arizona</option>
+          <option value = "AR" id = "state-option_AR">Arkansas</option>
+          <option value = "CA" id = "state-option_CA">California</option>
+          <option value = "CO" id = "state-option_CO">Colorado</option>
+          <option value = "CT" id = "state-option_CT">Connecticut</option>
+          <option value = "DC" id = "state-option_DC">District of Columbia</option>
+          <option value = "DE" id = "state-option_DE">Delaware</option>
+          <option value = "FL" id = "state-option_FL">Florida</option>
+          <option value = "GA" id = "state-option_GA">Georgia</option>
+          <option value = "HI" id = "state-option_HI">Hawaii</option>
+          <option value = "ID" id = "state-option_ID">Idaho</option>
+          <option value = "IL" id = "state-option_IL">Illinois</option>
+          <option value = "IN" id = "state-option_IN">Indiana</option>
+          <option value = "IA" id = "state-option_IA">Iowa</option>
+          <option value = "KS" id = "state-option_KS">Kansas</option>
+          <option value = "KY" id = "state-option_KY">Kentucky</option>
+          <option value = "LA" id = "state-option_LA">Louisiana</option>
+          <option value = "ME" id = "state-option_ME">Maine</option>
+          <option value = "MD" id = "state-option_MD">Maryland</option>
+          <option value = "MA" id = "state-option_MA">Massachusetts</option>
+          <option value = "MI" id = "state-option_MI">Michigan</option>
+          <option value = "MN" id = "state-option_MN">Minnesota</option>
+          <option value = "MS" id = "state-option_MS">Mississippi</option>
+          <option value = "MO" id = "state-option_MO">Missouri</option>
+          <option value = "MT" id = "state-option_MT">Montana</option>
+          <option value = "NE" id = "state-option_NE">Nebraska</option>
+          <option value = "NV" id = "state-option_NV">Nevada</option>
+          <option value = "NH" id = "state-option_NH">New Hampshire</option>
+          <option value = "NJ" id = "state-option_NJ">New Jersey</option>
+          <option value = "NM" id = "state-option_NM">New Mexico</option>
+          <option value = "NY" id = "state-option_NY">New York</option>
+          <option value = "NC" id = "state-option_NC">North Carolina</option>
+          <option value = "ND" id = "state-option_ND">North Dakota</option>
+          <option value = "OH" id = "state-option_OH">Ohio</option>
+          <option value = "OK" id = "state-option_OK">Oklahoma</option>
+          <option value = "OR" id = "state-option_OR">Oregon</option>
+          <option value = "PA" id = "state-option_PA">Pennsylvania</option>
+          <option value = "RI" id = "state-option_RI">Rhode Island</option>
+          <option value = "SC" id = "state-option_SC">South Carolina</option>
+          <option value = "SD" id = "state-option_SD">South Dakota</option>
+          <option value = "TN" id = "state-option_TN">Tennessee</option>
+          <option value = "TX" id = "state-option_TX">Texas</option>
+          <option value = "UT" id = "state-option_UT">Utah</option>
+          <option value = "VT" id = "state-option_VT">Vermont</option>
+          <option value = "VA" id = "state-option_VA">Virginia</option>
+          <option value = "WA" id = "state-option_WA">Washington</option>
+          <option value = "WV" id = "state-option_WV">West Virginia</option>
+          <option value = "WI" id = "state-option_WI">Wisconsin</option>
+          <option value = "WY" id = "state-option_WY">Wyoming</option>
+    </select>
+    Unemployment Insurance Claims as of <span id = "title-date"></span></div>
   <div id = "lineLegend">
     <div class = "ll-item">
       <div class = "ll-top r90"><span></span>1990 recession</div>
@@ -454,7 +509,7 @@ http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922 */
 
 var lookityUppity = {"United States":"US","Alabama":"AL","Alaska":"AK","Arkansas":"AR","Arizona":"AZ","California":"CA","Colorado":"CO","Connecticut":"CT","Delaware":"DE","District of Columbia":"DC","Florida":"FL","Georgia":"GA","Hawaii":"HI","Iowa":"IA","Idaho":"ID","Illinois":"IL","Indiana":"IN","Kansas":"KS","Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA","Michigan":"MI","Minnesota":"MN","Missouri":"MO","Mississippi":"MS","Montana":"MT","North Carolina":"NC","North Dakota":"ND","Nebraska":"NE","New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM","Nevada":"NV","New York":"NY","Ohio":"OH","Oklahoma":"OK","Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC","South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Virginia":"VA","Vermont":"VT","Washington":"WA","Wisconsin":"WI","West Virginia":"WV","Wyoming":"WY"}
 
-var lookityUppityRev = {"US": "United States","AL":"Alabama","AK":"Alaska","AR":"Arkansas","AZ":"Arizona","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District of Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MO":"Missouri","MS":"Mississippi","MT":"Montana","NC":"North Carolina","ND":"North Dakota","NE":"Nebraska","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VT":"Vermont","WA":"Washington","WI":"Wisconsin","WV":"West Virginia","WY":"Wyoming"}
+var lookityUppityRev = {"US": "All US","AL":"Alabama","AK":"Alaska","AR":"Arkansas","AZ":"Arizona","CA":"California","CO":"Colorado","CT":"Connecticut","DE":"Delaware","DC":"District of Columbia","FL":"Florida","GA":"Georgia","HI":"Hawaii","IA":"Iowa","ID":"Idaho","IL":"Illinois","IN":"Indiana","KS":"Kansas","KY":"Kentucky","LA":"Louisiana","ME":"Maine","MD":"Maryland","MA":"Massachusetts","MI":"Michigan","MN":"Minnesota","MO":"Missouri","MS":"Mississippi","MT":"Montana","NC":"North Carolina","ND":"North Dakota","NE":"Nebraska","NH":"New Hampshire","NJ":"New Jersey","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","RI":"Rhode Island","SC":"South Carolina","SD":"South Dakota","TN":"Tennessee","TX":"Texas","UT":"Utah","VA":"Virginia","VT":"Vermont","WA":"Washington","WI":"Wisconsin","WV":"West Virginia","WY":"Wyoming"}
 
 var WEEK_TOTAL = 81;
 
@@ -470,253 +525,6 @@ function getContainerWidth(){
 function getState(){
     return d3.select("#stateAbbr").datum()[0]
 }
-
-
-function drawMap(container_width) {
-
-  var colors=[null,"#CFE8F3","#73BFE2","#1696D2","#0A4C6A"];
-
-
-
-
-  function buildLink(abbr){
-  return "https://www.urban.org/sites/default/files/factsheet-uninsured-women-" + abbr.toLowerCase().trim() + ".pdf"
-
-  }
-
-  d3.csv("data/states-data.csv", function(data) {
-
-  d3.json("data/us-states.json", function(json) {
-  for (var i = 0; i < data.length; i++) {
-  var dataState = data[i].name;
-  var dataAbbr = data[i].abbr;
-  var percentUI = data[i].percentUI
-
-  for (var j = 0; j < json.features.length; j++)  {
-  var jsonState = json.features[j].properties.name;
-  if (dataState == jsonState) {
-  // Copy the data value into the JSON
-  json.features[j].properties.abbr = dataAbbr; 
-  json.features[j].properties.percentUI= +percentUI;
-
-  // Stop looking through the JSON
-  break;
-  }
-  }
-
-  }
-
-
-  var scalar;
-  if(IS_MOBILE()) scalar = .5
-  else if(IS_PHONE()) scalar = 1
-  else scalar = .6
-
-
-  //Width and height of map
-  $mapContainer = $("#map-container")
-  $tooltipHeader = $(".tooltip-container")
-  $mapContainer.empty();
-  $tooltipHeader.empty();
-  aspect_width = 15;
-  aspect_height = 8;
-  margin = { top: 0, right: 20, bottom: 0, left: 20 };
-  width= container_width*scalar
-  height = Math.ceil((width * aspect_height) / aspect_width) - margin.top - margin.bottom; 
-
-
-  if(IS_PHONE()){
-    d3.select("#mapLegend").style("margin-top", (height + 150) + "px")
-    d3.select("#mapSource").style("margin-top", (height + 100) + "px")
-  }else{
-    d3.select("#mapLegend").style("margin-top", (0) + "px")
-    d3.select("#mapSource").style("margin-top", (0) + "px")
-  }
-  // D3 Projection
-  var projection = d3.geoAlbersUsa()
-  .translate([width/2, height/2])    // translate to center of screen
-  .scale([width]);          // scale things down so see entire US
-
-  // Define path generator
-  var path = d3.geoPath()               // path generator that will convert GeoJSON to SVG paths
-  .projection(projection);  // tell path generator to use albersUsa projection
-
-
-  var colorScale = d3.scaleThreshold()
-    .domain([.05, .10, .15, .20, .25])
-    .range(colors);
-
-
-  d3.select("#ml-main").selectAll(".ml-item")
-    .data(colorScale.domain())
-    .enter()
-    .append("div")
-    .attr("class", "ml-item")
-    .style("background", function(d,i){
-      return colors[i+1]
-    })
-    .append("div")
-    .attr("class","ml-label")
-    .text(function(d,i){
-      return d3.format(".0%")(d)
-    })
-
-
-  svg = d3.select("#map-container")
-  .append("svg")
-  .attr("width", width)
-  .attr("height", height);
-  // Bind the data to the SVG and create one path per GeoJSON feature
-  var states = svg.selectAll("path")
-  .data(json.features)
-  .enter()
-  .append("svg:a")    
-  .attr('target','_blank')
-  .append("path")
-  .attr("d", path)
-  .attr("class", function(d) {
-  return "state " + d.properties.abbr;
-  })
-  .style("stroke", "#fff")
-  .style("stroke-width", "1")
-  .style("fill", function(d){ return colorScale(d.properties.percentUI)})
-
-  //ADD LEADER LINE FOR DC
-  var dcData = json.features.filter(function(d) {return d.properties.name == "District of Columbia"})
-
-  var dcLine1 = svg.append("line")
-  .attr("x1", .764*(width))
-  .attr("y1", .238*(width))
-  .attr("x2", .835*(width))
-  .attr("y2", .238*(width))
-  .attr("stroke-width", 1.2)
-  .attr("stroke", "#353535")
-  var dcLine2 = svg.append("line")
-  .attr("x1", .835*(width))
-  .attr("y1", .238*(width))
-  .attr("x2", .835*(width))
-  .attr("y2", function() {
-  if (IS_PHONE){
-  return .26*(width)
-  } else { 
-  return .22*(width)}
-  })
-  .attr("stroke-width", 1.2)
-  .attr("stroke", "#353535")
-  var dcText = svg.append("g")
-  .data(dcData)
-  dcText.append("text")
-  
-  .text(function(d) { 
-  if (IS_PHONE) {
-  return "DC";
-  } else {
-  return d.properties.name; }
-  })
-  .attr("x", function(){ return IS_PHONE ? .8*(width) + 10 : .8*(width) })
-  .attr("y", function() { 
-  if (IS_PHONE) {
-  return .28*(width)
-  } else { 
-  return .215*(width)}
-  })
-  .attr("class", "state-label state")   
-  
-  dcText.on("click", function(d){
-      dispatch.call("clickState", null, "DC")
-
-  })
-
-  //STATE TOOLTIP
-
-
-  var tooltip = d3.select(".tooltip-container")
-
-
-
-
-  d3.selectAll(".state")
-  .on("mouseover", function (d) {
-  dispatch.call("hoverState", this, (d3.select(this).attr('class')))
-  })
-  .on("mouseout", function (d) {
-  dispatch.call("dehoverState")
-  })
-  .on("click", function (d) {
-  dispatch.call("clickState", this, (d3.select(this).attr('class')))
-  })
-
-  var dispatch = d3.dispatch("hoverState", "dehoverState", "clickState");
-
-
-
-  dispatch.on("clickState", function (selectedState) {
-    updateChart(selectedState)
-  })
-
-  dispatch.on("hoverState", function (selectedState) {
-    var stateName = d3.select(this).datum().properties.name
-
-
-
-    state = selectedState.replace("state","").replace("deselected","").replace("selected","").replace("highlight"
-    ).replace("clicked","").replace("undefined","").trim()
-
-    if(state != "US"){
-      d3.selectAll("path.state").classed("highlight", false)
-        d3.select("path.state." + state)
-        .classed("highlight", true)
-        
-        d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
-    }
-
-  });
-  dispatch.on("dehoverState", function() {
-    var cl = d3.select("path.state.clicked")
-    if(cl.node() != null) dispatch.call("hoverState", cl.node(), (cl.attr('class')))
-    else d3.selectAll("path.state").classed("highlight", false)
-
-
-
-  })
-  // dispatch.on("clickState", function() {
-  // d3.select(".tooltip-data")
-  // .html("Click on a state")
-  // })
-
-  //STATE DROPDOWN MENU
-  var defaultOptionName = ""
-  var dropdown = tooltip.append('div')
-  .attr('class', 'dropdown-text')
-  // dropdown.append('div')
-  //       .attr('class', 'tooltip-title')
-  //  .text('SELECT A STATE')
-  var dropdownMenu =dropdown.append('div')
-  .attr('class', 'dropdown-container')
-  .append("select")
-  dropdownMenu.attr("class","select-css")
-  // .attr("onChange", "window.location.href=this.value")
-  dropdownMenu.on("change", function(){
-    updateChart(lookityUppity[this.value])
-  })
-
-var ddData = json.features
-ddData.unshift({"properties":{"name":"United States"}})  
-dropdownMenu.selectAll("option")
-  .data(ddData)
-  .enter()
-  .append("option")
-  .attr("class", function(d){ return d.properties.abbr})
-  .text(function(d) {return d.properties.name})
-  
-
-
-
-  });
-
-  })
-}
-
 
 
 
@@ -780,7 +588,7 @@ function drawChart(container_width){
   // moves the 'group' element to the top left margin
   var svg = d3.select("#lineContainer").append("svg")
   .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("height", height + margin.top + margin.bottom + 10)
   .append("g")
   .attr("id","lineG")
   .attr("transform",
@@ -1070,7 +878,9 @@ state = state.replace("state","").replace("deselected","").replace("selected",""
 
 d3.selectAll(".tt-state")
   .text(function(){
-    return  (state == "US" || state == "DC") ? "the " + lookityUppityRev[state] : lookityUppityRev[state]
+    if(state == "US") return "the United States"
+    else if(state == "DC") return "the District of Columbia"
+    else return lookityUppityRev[state]
   })
 
 d3.select("#title-state").text(function(){
@@ -1078,17 +888,17 @@ d3.select("#title-state").text(function(){
 })
 
 
-  if(state != "US"){
+//   if(state != "US"){
   
-    d3.selectAll("path.state").classed("highlight", false).classed("clicked", false)
-    d3.select("path.state." + state)
-      .classed("highlight", true)
-      .classed("clicked", true)
+//     d3.selectAll("path.state").classed("highlight", false).classed("clicked", false)
+//     d3.select("path.state." + state)
+//       .classed("highlight", true)
+//       .classed("clicked", true)
 
-    d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
-  }
+//     d3.select("path.state." + state).node().parentNode.parentNode.appendChild(d3.select("path.state." + state).node().parentNode)
+//   }
 
-$(".select-css").val(lookityUppityRev[state])
+// $(".select-css").val(lookityUppityRev[state])
 
   var mr = (IS_PHONE()) ? 40: 210;
   var ml = (IS_PHONE()) ? 40: 74
@@ -1222,13 +1032,17 @@ function removeTooltip(){
 
 
 function drawFigure(container_width){
-  drawMap(container_width)
   drawChart(container_width)
   // updateChart(getState())
 }
 
 d3.select("#stateAbbr").datum(["US"])
-
+d3.select(".select-css").on("change", function(){
+  var dummy = d3.select("body").append("div").attr("id","dummy").text(lookityUppityRev[this.value])
+  console.log(dummy.node().getBoundingClientRect().width + "px")
+  d3.select(".select-css").style("width",(dummy.node().getBoundingClientRect().width + 50) + "px")
+  updateChart(this.value)
+})
 
 var pymChild = new pym.Child({ renderCallback: drawFigure, polling: 500 });
 
