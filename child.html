@@ -1003,7 +1003,7 @@ showTooltip(cd[cd.length-1], datum, x, y, svg, width)
     // else if(t < 1000000) return (d3.format(".2f")(t/1000000)) + "M"
     // else return (d3.format(".0f")(t/1000000)) + "M"
     // return t*2;
-    return d3.format(".2s")(t).replace(".0","")
+    return d3.format(".2s")(t).replace("0.0","0").replace(".0k","k")
     })
   );
 
