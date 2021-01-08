@@ -474,7 +474,7 @@ left: 14px;
 
   <div class = "lineTt y">
     <div class = "tt-row">
-      <span class = "tt-claims"></span> claims <span class = "tt-tense">have</span> been filed in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> week<span class = "tt-plural">s</span>.
+      <span class = "tt-claims"></span> claims <span class = "tt-tense"></span> were filed in <span class = "tt-state">the United States</span> over <span class = "tt-weeks"></span> week<span class = "tt-plural">s</span>.
     </div>
     <div class = "tt-row intersect">
       That&rsquo;s <span class = "tt-"></span> about as many claims as there were at week <span class = "tt-equiv"></span> in the Great Recession.
@@ -765,8 +765,8 @@ function showTooltip(d, datum, x, y, svg, width, height){
     d3.selectAll(".tt-claims").text(comma(d.covid))
     d3.selectAll(".tt-mult").text(mult(d.covid/d.recession_07))
 
-    if(typeof(datum[d.week]["covid"]) == "undefined"){ d3.selectAll(".tt-tense").text("have") }
-    else{ d3.selectAll(".tt-tense").text("had") }
+    if(typeof(datum[d.week]["covid"]) == "undefined"){ d3.selectAll(".tt-tense").text("") }
+    else{ d3.selectAll(".tt-tense").text("") }
 
 
 
