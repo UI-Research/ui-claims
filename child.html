@@ -446,7 +446,7 @@ left: 14px;
           <option value = "WI" id = "state-option_WI">Wisconsin</option>
           <option value = "WY" id = "state-option_WY">Wyoming</option>
     </select>
-    Unemployment Insurance Claims as of <span id = "title-date"></span></div>
+    Unemployment Insurance Claims as reported on January 7, 2021</div>
   <div id = "lineLegend">
     <div class = "ll-item">
       <div class = "ll-top r90"><span></span>1990 recession</div>
@@ -733,7 +733,7 @@ daysOut = startDay.getDate() + weeksOut*7
 startDay.setDate(daysOut)
 
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-d3.select("#title-date").text( months[startDay.getMonth()] + " " + startDay.getDate() + ", " + startDay.getFullYear() )
+// d3.select("#title-date").text( months[startDay.getMonth()] + " " + startDay.getDate() + ", " + startDay.getFullYear() )
 
 
 
